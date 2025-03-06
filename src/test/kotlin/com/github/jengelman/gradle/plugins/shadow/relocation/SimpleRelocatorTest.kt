@@ -202,6 +202,20 @@ class SimpleRelocatorTest {
   }
 
   @Test
+  fun relocatePathPostPattern() {
+    val relocator = SimpleRelocator("org.foo")
+    assertThat(relocator.relocatePath("org/foosssssss/bar/Class.class"))
+      .isEqualTo("hidden/org/foosssssss/bar/Class.class")
+  }
+
+  @Test
+  fun relocateClassPostPattern() {
+    val relocator = SimpleRelocator("org.foo")
+    assertThat(relocator.relocateClass("org.foo.bar.Class"))
+      .isEqualTo("hidden.org.foo.bar.Class")
+  }
+
+  @Test
   fun relocateRawString() {
     var relocator = SimpleRelocator("Lorg/foo", "Lhidden/org/foo", rawString = true)
     assertThat(relocator.relocatePath("(I)Lorg/foo/bar/Class;"))
