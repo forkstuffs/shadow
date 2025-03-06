@@ -17,6 +17,8 @@ public open class SimpleRelocator @JvmOverloads constructor(
   shadedPattern: String? = null,
   includes: List<String>? = null,
   excludes: List<String>? = null,
+  includeSources: List<String>? = null,
+  excludeSources: List<String>? = null,
   private val rawString: Boolean = false,
 ) : Relocator {
   private val pattern: String
@@ -31,6 +33,12 @@ public open class SimpleRelocator @JvmOverloads constructor(
 
   @get:Input
   public val excludes: MutableSet<String> = mutableSetOf()
+
+  @get:Input
+  private val includeSources: MutableSet<String> = mutableSetOf<String>()
+
+  @get:Input
+  private val excludeSources: MutableSet<String> = mutableSetOf<String>()
 
   init {
     if (rawString) {
@@ -56,6 +64,9 @@ public open class SimpleRelocator @JvmOverloads constructor(
     }
     this.includes.addAll(normalizePatterns(includes))
     this.excludes.addAll(normalizePatterns(excludes))
+
+    this.includeSources.addAll(normalizePatterns(includeSources))
+    this.excludeSources.addAll(normalizePatterns(excludeSources))
 
     // Don't replace all dots to slashes, otherwise /META-INF/maven/${groupId} can't be matched.
     if (!includes.isNullOrEmpty()) {
@@ -90,6 +101,14 @@ public open class SimpleRelocator @JvmOverloads constructor(
 
   public open fun exclude(pattern: String) {
     excludes.addAll(normalizePatterns(listOf(pattern)))
+  }
+
+  public open fun includeSources(pattern: String): SimpleRelocator = apply {
+    includeSources.addAll(normalizePatterns(listOf(pattern)))
+  }
+
+  public open fun excludeSources(pattern: String): SimpleRelocator = apply {
+    excludeSources.addAll(normalizePatterns(listOf(pattern)))
   }
 
   override fun canRelocatePath(path: String): Boolean {
@@ -132,6 +151,23 @@ public open class SimpleRelocator @JvmOverloads constructor(
     return shadeSourceWithExcludes(content, pathPattern, shadedPathPattern, sourcePathExcludes)
   }
 
+  override fun canRelocatePathSource(path: String): Boolean {
+    if (rawString) return Pattern.compile(pathPattern).matcher(path).find()
+    // If string is too short - no need to perform expensive string operations.
+    if (path.length < pathPattern.length) return false
+    var adjustedPath = path.removeSuffix(".class")
+    // Safeguard against strings containing only ".class".
+    if (adjustedPath.isEmpty()) return false
+    // Allow for annoying option of an extra / on the front of a path. See MSHADE-119;
+    // comes from getClass().getResource("/a/b/c.properties").
+    adjustedPath = adjustedPath.removePrefix("/")
+    return isSourceIncluded(adjustedPath) && !isSourceExcluded(adjustedPath)
+  }
+
+  override fun canRelocateClassSource(className: String): Boolean {
+    return !rawString && !className.contains('/') && canRelocatePathSource(className.replace('.', '/'))
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is SimpleRelocator) return false
@@ -165,6 +201,14 @@ public open class SimpleRelocator @JvmOverloads constructor(
 
   private fun isExcluded(path: String): Boolean {
     return excludes.any { SelectorUtils.matchPath(it, path, "/", true) }
+  }
+
+  private fun isSourceIncluded(path: String): Boolean {
+    return includeSources.isEmpty() || includeSources.any { SelectorUtils.matchPath(it, path, "/", true) }
+  }
+
+  private fun isSourceExcluded(path: String): Boolean {
+    return excludeSources.any { SelectorUtils.matchPath(it, path, "/", true) }
   }
 
   private companion object {

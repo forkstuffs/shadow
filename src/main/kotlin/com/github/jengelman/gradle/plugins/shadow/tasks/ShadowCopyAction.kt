@@ -185,9 +185,12 @@ public open class ShadowCopyAction(
       val cv = ClassRemapper(cw, remapper)
 
       try {
+        remapper.currentFilePath = path
         cr.accept(cv, ClassReader.EXPAND_FRAMES)
       } catch (t: Throwable) {
         throw GradleException("Error in ASM processing class $path", t)
+      } finally {
+        remapper.currentFilePath = null
       }
 
       // Temporarily remove the multi-release prefix.

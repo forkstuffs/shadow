@@ -14,6 +14,7 @@ internal class RelocatorRemapper(
   private val relocators: Set<Relocator>,
 ) : Remapper() {
   private val classPattern: Pattern = Pattern.compile("(\\[*)?L(.+)")
+  var currentFilePath: String? = null
 
   override fun mapValue(value: Any): Any {
     return if (value is String) {
@@ -36,6 +37,10 @@ internal class RelocatorRemapper(
     }
 
     for (relocator in relocators) {
+      if (!this.canRelocatePathSource(relocator)) {
+        continue
+      }
+
       if (relocator.canRelocateClass(newName)) {
         return prefix + relocator.relocateClass(newName) + suffix
       } else if (relocator.canRelocatePath(newName)) {
@@ -48,5 +53,10 @@ internal class RelocatorRemapper(
 
   fun mapPath(path: String): String {
     return map(path.substring(0, path.indexOf('.')))
+  }
+
+  private fun canRelocatePathSource(relocator: Relocator): Boolean {
+    val currentFilePath: String? = this.currentFilePath
+    return currentFilePath == null || relocator.canRelocatePathSource(currentFilePath)
   }
 }

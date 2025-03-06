@@ -280,7 +280,7 @@ class SimpleRelocatorTest {
       "com.acme.maven",
       listOf("foo.bar", "zot.baz"),
       listOf("irrelevant.exclude", "org.apache.maven.exclude1", "org.apache.maven.sub.exclude2"),
-      true,
+      rawString = true,
     )
     assertThat(relocator.applyToSourceContent(sourceFile)).isEqualTo(sourceFile)
   }
@@ -311,6 +311,48 @@ class SimpleRelocatorTest {
         ),
       ),
     ).isEqualTo(relocatedFile)
+  }
+
+  @Test
+  fun canRelocateClassSourceInclude() {
+    val relocator = SimpleRelocator(
+      "a.b.c",
+      "x.y.z.shade.a.b.c",
+    )
+    relocator.includeSources("x/y/z/onlyabc/**")
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.onlyabc.MyClass"),
+    ).isTrue()
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.onlydef.MyClass"),
+    ).isFalse()
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.nochanges.MyClass"),
+    ).isFalse()
+  }
+
+  @Test
+  fun canRelocateClassSourceExclude() {
+    val relocator = SimpleRelocator(
+      "a.b.c",
+      "x.y.z.shade.a.b.c",
+    )
+    relocator.excludeSources("x/y/z/onlyabc/**")
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.onlyabc.MyClass"),
+    ).isFalse()
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.onlydef.MyClass"),
+    ).isTrue()
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.nochanges.MyClass"),
+    ).isTrue()
   }
 
   private companion object {
@@ -384,6 +426,64 @@ class SimpleRelocatorTest {
           String relocationPath = "com/acme/maven/In";
         }
       }
+    """.trimIndent()
+
+    val complexSourceFile = """
+      package x.y.z.onlyabc;
+
+      import a.b.c.Example;
+      import a.b.c.d.Example;
+      import d.e.f.Example;
+      import d.e.f.g.Example;
+
+      final class MyClass {}
+
+      package x.y.z.onlydef;
+
+      import a.b.c.Example;
+      import a.b.c.d.Example;
+      import d.e.f.Example;
+      import d.e.f.g.Example;
+
+      final class MyClass {}
+
+      package x.y.z.nochanges;
+
+      import a.b.c.Example;
+      import a.b.c.d.Example;
+      import d.e.f.Example;
+      import d.e.f.g.Example;
+
+      final class MyClass {}
+    """.trimIndent()
+
+    val complexRelocatedFile = """
+      package x.y.z.onlyabc;
+
+      import x.y.z.shade.a.b.c.Example;
+      import x.y.z.shade.a.b.c.d.Example;
+      import d.e.f.Example;
+      import d.e.f.g.Example;
+
+      final class MyClass {}
+
+      package x.y.z.onlydef;
+
+      import a.b.c.Example;
+      import a.b.c.d.Example;
+      import x.y.z.shade.d.e.f.Example;
+      import x.y.z.shade.d.e.f.g.Example;
+
+      final class MyClass {}
+
+      package x.y.z.nochanges;
+
+      import a.b.c.Example;
+      import a.b.c.d.Example;
+      import d.e.f.Example;
+      import d.e.f.g.Example;
+
+      final class MyClass {}
     """.trimIndent()
   }
 }

@@ -19,6 +19,10 @@ public interface Relocator {
 
   public fun applyToSourceContent(sourceContent: String): String
 
+  public fun canRelocatePathSource(path: String): Boolean
+
+  public fun canRelocateClassSource(className: String): Boolean
+
   public companion object {
     public val ROLE: String = Relocator::class.java.name
   }
