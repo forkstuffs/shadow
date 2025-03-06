@@ -211,8 +211,8 @@ class SimpleRelocatorTest {
   @Test
   fun relocateClassPostPattern() {
     val relocator = SimpleRelocator("org.foo")
-    assertThat(relocator.relocateClass("org.foo.bar.Class"))
-      .isEqualTo("hidden.org.foo.bar.Class")
+    assertThat(relocator.relocateClass("org.foosssssss.bar.Class"))
+      .isEqualTo("hidden.org.foosssssss.bar.Class")
   }
 
   @Test
