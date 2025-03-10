@@ -113,16 +113,7 @@ public open class SimpleRelocator @JvmOverloads constructor(
   }
 
   override fun canRelocatePath(path: String): Boolean {
-    if (rawString) return Pattern.compile(pathPattern).matcher(path).find()
-    // If string is too short - no need to perform expensive string operations.
-    if (path.length < pathPattern.length) return false
-    var adjustedPath = path.removeSuffix(".class")
-    // Safeguard against strings containing only ".class".
-    if (adjustedPath.isEmpty()) return false
-    // Allow for annoying option of an extra / on the front of a path. See MSHADE-119;
-    // comes from getClass().getResource("/a/b/c.properties").
-    adjustedPath = adjustedPath.removePrefix("/")
-    return isIncluded(adjustedPath) && !isExcluded(adjustedPath) && adjustedPath.startsWith(pathPattern)
+    return canRelocatePath(includes, excludes, true, path)
   }
 
   override fun canRelocateClass(className: String): Boolean {
@@ -153,16 +144,7 @@ public open class SimpleRelocator @JvmOverloads constructor(
   }
 
   override fun canRelocatePathSource(path: String): Boolean {
-    if (rawString) return Pattern.compile(pathPattern).matcher(path).find()
-    // If string is too short - no need to perform expensive string operations.
-    if (path.length < pathPattern.length) return false
-    var adjustedPath = path.removeSuffix(".class")
-    // Safeguard against strings containing only ".class".
-    if (adjustedPath.isEmpty()) return false
-    // Allow for annoying option of an extra / on the front of a path. See MSHADE-119;
-    // comes from getClass().getResource("/a/b/c.properties").
-    adjustedPath = adjustedPath.removePrefix("/")
-    return isSourceIncluded(adjustedPath) && !isSourceExcluded(adjustedPath)
+    return canRelocatePath(includeSources, excludeSources, false, path)
   }
 
   override fun canRelocateClassSource(className: String): Boolean {
@@ -196,20 +178,25 @@ public open class SimpleRelocator @JvmOverloads constructor(
     return result
   }
 
-  private fun isIncluded(path: String): Boolean {
-    return includes.isEmpty() || includes.any { SelectorUtils.matchPath(it, path, "/", true) }
-  }
-
-  private fun isExcluded(path: String): Boolean {
-    return excludes.any { SelectorUtils.matchPath(it, path, "/", true) }
-  }
-
-  private fun isSourceIncluded(path: String): Boolean {
-    return includeSources.isEmpty() || includeSources.any { SelectorUtils.matchPath(it, path, "/", true) }
-  }
-
-  private fun isSourceExcluded(path: String): Boolean {
-    return excludeSources.any { SelectorUtils.matchPath(it, path, "/", true) }
+  private fun canRelocatePath(
+    includes: Collection<String>,
+    excludes: Collection<String>,
+    startsWithPattern: Boolean,
+    path: String,
+  ): Boolean {
+    if (rawString) return Pattern.compile(pathPattern).matcher(path).find()
+    // If string is too short - no need to perform expensive string operations.
+    if (path.length < pathPattern.length) return false
+    var adjustedPath = path.removeSuffix(".class")
+    // Safeguard against strings containing only ".class".
+    if (adjustedPath.isEmpty()) return false
+    // Allow for annoying option of an extra / on the front of a path. See MSHADE-119;
+    // comes from getClass().getResource("/a/b/c.properties").
+    adjustedPath = adjustedPath.removePrefix("/")
+    if (!isIncluded(includes, adjustedPath) || isExcluded(excludes, adjustedPath)) {
+      return false
+    }
+    return !startsWithPattern || adjustedPath.startsWith(pathPattern)
   }
 
   private companion object {
@@ -296,6 +283,14 @@ public open class SimpleRelocator @JvmOverloads constructor(
         }
       }
       return shadedSourceContent.toString()
+    }
+
+    private fun isIncluded(includes: Collection<String>, path: String): Boolean {
+      return includes.isEmpty() || includes.any { SelectorUtils.matchPath(it, path, "/", true) }
+    }
+
+    private fun isExcluded(excludes: Collection<String>, path: String): Boolean {
+      return excludes.any { SelectorUtils.matchPath(it, path, "/", true) }
     }
   }
 }
