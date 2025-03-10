@@ -328,7 +328,7 @@ class SimpleRelocatorTest {
       "a.b.c",
       "x.y.z.shade.a.b.c",
     )
-    relocator.includeSources("x/y/z/onlyabc/**")
+    relocator.includeSources("x.y.z.onlyabc.*")
 
     assertThat(
       relocator.canRelocateClassSource("x.y.z.onlyabc.MyClass"),
@@ -349,7 +349,7 @@ class SimpleRelocatorTest {
       "a.b.c",
       "x.y.z.shade.a.b.c",
     )
-    relocator.excludeSources("x/y/z/onlyabc/**")
+    relocator.excludeSources("x.y.z.onlyabc.*")
 
     assertThat(
       relocator.canRelocateClassSource("x.y.z.onlyabc.MyClass"),
@@ -358,6 +358,28 @@ class SimpleRelocatorTest {
     assertThat(
       relocator.canRelocateClassSource("x.y.z.onlydef.MyClass"),
     ).isTrue()
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.nochanges.MyClass"),
+    ).isTrue()
+  }
+
+  @Test
+  fun canRelocateClassSourceNoChanes() {
+    val relocator = SimpleRelocator(
+      "a.b.c",
+      "x.y.z.shade.a.b.c",
+    )
+    relocator.excludeSources("x.y.z.onlyabc.*")
+    relocator.excludeSources("x.y.z.onlydef.*")
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.onlyabc.MyClass"),
+    ).isFalse()
+
+    assertThat(
+      relocator.canRelocateClassSource("x.y.z.onlydef.MyClass"),
+    ).isFalse()
 
     assertThat(
       relocator.canRelocateClassSource("x.y.z.nochanges.MyClass"),
