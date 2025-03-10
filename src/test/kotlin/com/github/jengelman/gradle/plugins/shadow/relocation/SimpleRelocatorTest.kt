@@ -4,8 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import com.github.jengelman.gradle.plugins.shadow.internal.relocateClass
-import com.github.jengelman.gradle.plugins.shadow.internal.relocatePath
 import org.junit.jupiter.api.Test
 
 /**
@@ -67,6 +65,14 @@ class SimpleRelocatorTest {
     assertThat(relocator.canRelocatePath("test")).isFalse() // shorter than path pattern with /
     assertThat(relocator.canRelocatePath("org/f")).isTrue() // equal to path pattern
     assertThat(relocator.canRelocatePath("/org/f")).isTrue() // equal to path pattern with /
+
+    relocator = SimpleRelocator("foo.")
+    assertThat(relocator.canRelocatePath("foo/foo.bar")).isTrue()
+    relocator.exclude("foo/foo.bar")
+    assertThat(relocator.canRelocatePath("foo/foo.bar")).isFalse() // Don't handle file path pattern.
+    assertThat(relocator.canRelocatePath("foo/foobar")).isTrue()
+    relocator.exclude("foo/foobar")
+    assertThat(relocator.canRelocatePath("foo/foobar")).isFalse() // File without extension.
   }
 
   @Test
@@ -184,6 +190,9 @@ class SimpleRelocatorTest {
     var relocator = SimpleRelocator("org.foo")
     assertThat(relocator.relocatePath("org/foo/bar/Class.class"))
       .isEqualTo("hidden/org/foo/bar/Class.class")
+    // Post-pattern case.
+    assertThat(relocator.relocatePath("org/foosssssss/bar/Class.class"))
+      .isEqualTo("hidden/org/foosssssss/bar/Class.class")
 
     relocator = SimpleRelocator("org.foo", "private.stuff")
     assertThat(relocator.relocatePath("org/foo/bar/Class.class"))
