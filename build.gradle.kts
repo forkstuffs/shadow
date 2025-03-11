@@ -73,7 +73,7 @@ testing.suites {
       implementation(libs.xmlunit)
     }
   }
-  register<JvmTestSuite>("integrationTest") {
+  register<JvmTestSuite>("documentTest") {
     targets.configureEach {
       testTask {
         val docsDir = file("docs")
@@ -118,7 +118,7 @@ testing.suites {
     }
     targets.configureEach {
       testTask {
-        maxParallelForks = Runtime.getRuntime().availableProcessors() * 2
+        maxParallelForks = Runtime.getRuntime().availableProcessors()
       }
     }
   }
@@ -136,7 +136,7 @@ kotlin.target.compilations {
 gradlePlugin {
   testSourceSets(
     sourceSets["functionalTest"],
-    sourceSets["integrationTest"],
+    sourceSets["documentTest"],
   )
 }
 

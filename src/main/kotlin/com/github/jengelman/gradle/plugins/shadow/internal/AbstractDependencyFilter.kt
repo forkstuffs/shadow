@@ -4,9 +4,11 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.DependencyFilter
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.specs.Spec
 
 internal sealed class AbstractDependencyFilter(
@@ -43,29 +45,37 @@ internal sealed class AbstractDependencyFilter(
     includeSpecs.add(spec)
   }
 
-  override fun project(notation: Map<String, *>): Spec<ResolvedDependency> {
-    return dependency(project.dependencies.project(notation))
-  }
-
-  override fun project(path: String): Spec<ResolvedDependency> {
-    return project(mapOf("path" to path))
+  override fun project(notation: Any): Spec<ResolvedDependency> {
+    @Suppress("UNCHECKED_CAST")
+    val realNotation = when (notation) {
+      is ProjectDependency -> return notation.toSpec()
+      is Provider<*> -> mapOf("path" to notation.get())
+      is String -> mapOf("path" to notation)
+      is Map<*, *> -> notation as Map<String, Any>
+      else -> throw IllegalArgumentException("Unsupported notation type: ${notation::class.java}")
+    }
+    return project.dependencies.project(realNotation).toSpec()
   }
 
   override fun dependency(dependencyNotation: Any): Spec<ResolvedDependency> {
-    return dependency(project.dependencies.create(dependencyNotation))
-  }
-
-  override fun dependency(dependency: Dependency): Spec<ResolvedDependency> {
-    return Spec<ResolvedDependency> { resolvedDependency ->
-      (dependency.group == null || resolvedDependency.moduleGroup.matches(dependency.group!!.toRegex())) &&
-        resolvedDependency.moduleName.matches(dependency.name.toRegex()) &&
-        (dependency.version == null || resolvedDependency.moduleVersion.matches(dependency.version!!.toRegex()))
+    val realNotation = when (dependencyNotation) {
+      is Provider<*> -> dependencyNotation.get()
+      else -> dependencyNotation
     }
+    return project.dependencies.create(realNotation).toSpec()
   }
 
   protected fun ResolvedDependency.isIncluded(): Boolean {
     val include = includeSpecs.isEmpty() || includeSpecs.any { it.isSatisfiedBy(this) }
     val exclude = excludeSpecs.isNotEmpty() && excludeSpecs.any { it.isSatisfiedBy(this) }
     return include && !exclude
+  }
+
+  private fun Dependency.toSpec(): Spec<ResolvedDependency> {
+    return Spec<ResolvedDependency> { resolvedDependency ->
+      (group == null || resolvedDependency.moduleGroup.matches(group!!.toRegex())) &&
+        resolvedDependency.moduleName.matches(name.toRegex()) &&
+        (version == null || resolvedDependency.moduleVersion.matches(version!!.toRegex()))
+    }
   }
 }
