@@ -1,18 +1,19 @@
 package com.github.jengelman.gradle.plugins.shadow
 
 import assertk.assertThat
+import com.github.jengelman.gradle.plugins.shadow.util.JvmLang
 import com.github.jengelman.gradle.plugins.shadow.util.containsEntries
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class KmpPluginTest : BasePluginTest() {
+class GroovyPluginTest : BasePluginTest() {
   @BeforeEach
   override fun setup() {
     super.setup()
     val projectBuildScript = getDefaultProjectBuildScript(
-      plugin = "org.jetbrains.kotlin.multiplatform",
+      plugin = "groovy",
       withGroup = true,
       withVersion = true,
     )
@@ -20,24 +21,13 @@ class KmpPluginTest : BasePluginTest() {
   }
 
   @Test
-  fun compatKmpJvmTarget() {
-    val mainClass = writeClass(sourceSet = "jvmMain", isJava = false)
+  fun compatGroovy() {
+    val mainClassEntry = writeClass(withImports = true, jvmLang = JvmLang.Groovy)
     projectScriptPath.appendText(
       """
-        kotlin {
-          jvm()
-          sourceSets {
-            commonMain {
-              dependencies {
-                implementation 'my:b:1.0'
-              }
-            }
-            jvmMain {
-              dependencies {
-                implementation 'my:a:1.0'
-              }
-            }
-          }
+        dependencies {
+          compileOnly localGroovy()
+          implementation 'junit:junit:3.8.2'
         }
       """.trimIndent(),
     )
@@ -46,8 +36,8 @@ class KmpPluginTest : BasePluginTest() {
 
     assertThat(outputShadowJar).useAll {
       containsEntries(
-        mainClass,
-        *entriesInAB,
+        mainClassEntry,
+        *junitEntries,
       )
     }
   }

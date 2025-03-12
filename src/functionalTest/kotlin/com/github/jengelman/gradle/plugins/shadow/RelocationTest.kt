@@ -27,7 +27,7 @@ class RelocationTest : BasePluginTest() {
   @ParameterizedTest
   @MethodSource("prefixProvider")
   fun autoRelocation(relocationPrefix: String) {
-    val mainClass = writeClass()
+    val mainClassEntry = writeClass()
     projectScriptPath.appendText(
       """
         dependencies {
@@ -45,11 +45,11 @@ class RelocationTest : BasePluginTest() {
 
     assertThat(outputShadowJar).useAll {
       containsEntries(
-        mainClass,
+        mainClassEntry,
         *junitEntries.map { "$entryPrefix/$it" }.toTypedArray(),
       )
       doesNotContainEntries(
-        "$entryPrefix/$mainClass",
+        "$entryPrefix/$mainClassEntry",
         *junitEntries,
       )
     }
@@ -64,7 +64,7 @@ class RelocationTest : BasePluginTest() {
   )
   @Test
   fun relocateDependencyFiles() {
-    val mainClass = writeClass()
+    val mainClassEntry = writeClass()
     projectScriptPath.appendText(
       """
         dependencies {
@@ -90,7 +90,7 @@ class RelocationTest : BasePluginTest() {
 
     assertThat(outputShadowJar).useAll {
       containsEntries(
-        mainClass,
+        mainClassEntry,
         *runnerEntries,
         *frameworkEntries,
         *otherJunitEntries,
@@ -105,7 +105,7 @@ class RelocationTest : BasePluginTest() {
 
   @Test
   fun relocateDependencyFilesWithFiltering() {
-    val mainClass = writeClass()
+    val mainClassEntry = writeClass()
     projectScriptPath.appendText(
       """
         dependencies {
@@ -135,7 +135,7 @@ class RelocationTest : BasePluginTest() {
 
     assertThat(outputShadowJar).useAll {
       containsEntries(
-        mainClass,
+        mainClassEntry,
         *runnerEntries,
         *frameworkEntries,
         *otherJunitEntries,
@@ -514,6 +514,36 @@ class RelocationTest : BasePluginTest() {
           *junitEntries,
         )
       }
+    }
+  }
+
+  @Test
+  fun relocateProjectResourcesOnly() {
+    val mainClassEntry = writeClass()
+    projectScriptPath.appendText(
+      """
+        dependencies {
+          implementation 'junit:junit:3.8.2'
+        }
+        $shadowJar {
+          configurations = []
+          relocate('', 'foo/')
+        }
+      """.trimIndent(),
+    )
+
+    run(shadowJarTask)
+
+    assertThat(outputShadowJar).useAll {
+      containsEntries(
+        "foo/$mainClassEntry",
+        "foo/META-INF/MANIFEST.MF",
+      )
+      doesNotContainEntries(
+        "META-INF/MANIFEST.MF",
+        *junitEntries,
+        *junitEntries.map { "foo/$it" }.toTypedArray(),
+      )
     }
   }
 
