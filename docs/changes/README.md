@@ -2,7 +2,25 @@
 
 
 ## [Unreleased]
-[Unreleased]: https://github.com/GradleUp/shadow/compare/9.0.0-beta11...HEAD
+[Unreleased]: https://github.com/GradleUp/shadow/compare/9.0.0-beta12...HEAD
+
+
+## [v9.0.0-beta12] (2025-04-01)
+[v9.0.0-beta12]: https://github.com/GradleUp/shadow/releases/tag/9.0.0-beta12
+
+**Added**
+
+- Support command line options for `ShadowJar`. ([#1365](https://github.com/GradleUp/shadow/pull/1365))
+```
+Options:
+
+--enable-relocation       Enable relocation of packages in the jar
+--no-enable-relocation    Disables option --enable-relocation
+--minimize-jar            Minimize the jar by removing unused classes
+--no-minimize-jar         Disables option --minimize-jar
+--relocation-prefix       Prefix to use for relocated packages
+--rerun                   Causes the task to be re-run even if up-to-date
+```
 
 **Changed**
 
@@ -298,18 +316,18 @@
 
 **NOTE:** As of this version, the GitHub repository has migrated to the `main` branch as the default branch for releases.
 
-## What's Changed
+### What's Changed
 * Replace deprecated ConfigureUtil by [@Goooler](https://github.com/Goooler) in [#826](https://github.com/GradleUp/shadow/pull/826)
 * Polish outdated configs by [@Goooler](https://github.com/Goooler) in [#831](https://github.com/GradleUp/shadow/pull/831)
-* Update plugin com.gradle.enterprise to v3.12.5 by [@renovate](https://github.com/renovate) in [#838](https://github.com/GradleUp/shadow/pull/838)
-* Update dependency gradle to v8.0.2 by [@renovate](https://github.com/renovate) in [#844](https://github.com/GradleUp/shadow/pull/844)
-* fix(deps): update dependency org.codehaus.plexus:plexus-utils to v3.5.1 by [@renovate](https://github.com/renovate) in [#837](https://github.com/GradleUp/shadow/pull/837)
-* chore(deps): update dependency prismjs to v1.27.0 [security] by [@renovate](https://github.com/renovate) in [#828](https://github.com/GradleUp/shadow/pull/828)
+* Update plugin com.gradle.enterprise to v3.12.5 by [@renovate](https://github.com/renovate-bot) in [#838](https://github.com/GradleUp/shadow/pull/838)
+* Update dependency gradle to v8.0.2 by [@renovate](https://github.com/renovate-bot) in [#844](https://github.com/GradleUp/shadow/pull/844)
+* fix(deps): update dependency org.codehaus.plexus:plexus-utils to v3.5.1 by [@renovate](https://github.com/renovate-bot) in [#837](https://github.com/GradleUp/shadow/pull/837)
+* chore(deps): update dependency prismjs to v1.27.0 [security] by [@renovate](https://github.com/renovate-bot) in [#828](https://github.com/GradleUp/shadow/pull/828)
 * Encode transformed properties files with specified Charset by [@scottsteen](https://github.com/scottsteen) in [#819](https://github.com/GradleUp/shadow/pull/819)
-* chore(deps): update dependency vuepress to v1.9.9 by [@renovate](https://github.com/renovate) in [#842](https://github.com/GradleUp/shadow/pull/842)
+* chore(deps): update dependency vuepress to v1.9.9 by [@renovate](https://github.com/renovate-bot) in [#842](https://github.com/GradleUp/shadow/pull/842)
 
-## New Contributors
-* [@renovate](https://github.com/renovate) made their first contribution in [#838](https://github.com/GradleUp/shadow/pull/838)
+### New Contributors
+* [@renovate](https://github.com/renovate-bot) made their first contribution in [#838](https://github.com/GradleUp/shadow/pull/838)
 * [@scottsteen](https://github.com/scottsteen) made their first contribution in [#819](https://github.com/GradleUp/shadow/pull/819)
 
 **Full Changelog**: [`8.1.0...8.1.1`](https://github.com/GradleUp/shadow/compare/8.1.0...8.1.1)
@@ -325,12 +343,12 @@ For example, `classpath("com.github.johnrengelman:shadow:8.1.0")` is the correct
 **BREAKING CHANGE:** The `ConfigureShadowRelocation` task was removed as of this version to better support Gradle configuration caching. 
 Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package>"` settings on the `ShadowJar` task type.
 
-## What's Changed
+### What's Changed
 * Minor cleanups by [@Goooler](https://github.com/Goooler) in [#823](https://github.com/GradleUp/shadow/pull/823)
 * Support config cache by [@Goooler](https://github.com/Goooler) in [#824](https://github.com/GradleUp/shadow/pull/824)
 * Fix RelocatorRemapper: do not map inner class name if not changed by [@Him188](https://github.com/Him188) in [#793](https://github.com/GradleUp/shadow/pull/793)
 
-## New Contributors
+### New Contributors
 * [@Him188](https://github.com/Him188) made their first contribution in [#793](https://github.com/GradleUp/shadow/pull/793)
 
 **Full Changelog**: [`8.0.0...8.1.0`](https://github.com/GradleUp/shadow/compare/8.0.0...8.1.0)
@@ -339,7 +357,7 @@ Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package
 ## [v8.0.0] (2023-02-24)
 [v8.0.0]: https://github.com/GradleUp/shadow/releases/tag/8.0.0
 
-## What's Changed
+### What's Changed
 * Fix the plugin dependency identifier in the docs by [@lnhrdt](https://github.com/lnhrdt) in [#754](https://github.com/GradleUp/shadow/pull/754)
 * mergeGroovyExtensionModules() not working with Groovy 2.5+ by [@paulk-asert](https://github.com/paulk-asert) in [#779](https://github.com/GradleUp/shadow/pull/779)
 * Upgrade to ASM 9.3 to support JDK 19. by [@vyazelenko](https://github.com/vyazelenko) in [#770](https://github.com/GradleUp/shadow/pull/770)
@@ -355,7 +373,7 @@ Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package
 * Support Gradle 8.0 by [@Goooler](https://github.com/Goooler) in [#822](https://github.com/GradleUp/shadow/pull/822)
 * Updated dependencies, Gradle versions and Fix Test by [@ElisaMin](https://github.com/ElisaMin) in [#791](https://github.com/GradleUp/shadow/pull/791)
 
-## New Contributors
+### New Contributors
 * [@lnhrdt](https://github.com/lnhrdt) made their first contribution in [#754](https://github.com/GradleUp/shadow/pull/754)
 * [@paulk-asert](https://github.com/paulk-asert) made their first contribution in [#779](https://github.com/GradleUp/shadow/pull/779)
 * [@desiderantes](https://github.com/desiderantes) made their first contribution in [#769](https://github.com/GradleUp/shadow/pull/769)
@@ -506,7 +524,7 @@ Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package
 - **Breaking Change!** For clarity purposes `com.github.johnrengelman.plugin-shadow` has been removed. If you intend to use this feature, you will need to declare your own `ConfigureShadowRelocation` task. See section [2.9.2](https://gradleup.com/shadow/#automatically_relocating_dependencies) of the User Guide
 - [Sergey Tselovalnikov](https://github.com/SerCeMan) - Upgrade to ASM 6.2.1 to support Java 11
 - [Chris Cowan](https://github.com/Macil) - Add support for `shadowJar.preserveFileTimestamps` property. See [Jar.preserveFileTimestamps](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html#org.gradle.api.tasks.bundling.Jar:preserveFileTimestamps)
-- [Paul N. Baker](https://github.com/paul-nelson-baker) - Add `Log4j2PluginsCacheFileTransformer` to process Log4j DAT files during merge.
+- [Paul N. Baker](https://github.com/niko-dunixi) - Add `Log4j2PluginsCacheFileTransformer` to process Log4j DAT files during merge.
 - [Felipe Lima](https://github.com/felipecsl) - Fix the long standing "No property `mainClassName`" issue.
 - [debanne](https://github.com/debanne) - Implement JAR minimization actions. This will attempt to exclude unused classes in your shadowed JAR.
 - Configure exclusion of `module-info.class` from `shadowJar` when using the Shadow the Java plugin, [#352](https://github.com/GradleUp/shadow/issues/352)
@@ -525,7 +543,7 @@ Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package
 
 ## v2.0.2 (2017-12-12)
 
-- [Ben Adazza](https://github.com/ben-adazza), [Tyler Benson](https://github.com/tylerbenson) - documentation
+- [Ben Adazza](https://github.com/ghost), [Tyler Benson](https://github.com/tylerbenson) - documentation
 - [Marke Vieira](https://github.com/mark-vieira) - Support multi-project builds with Build-Scan integration
 - Upgrade to ASM 6, [#294]https://github.com/GradleUp/shadow/issues/294, [#303](https://github.com/GradleUp/shadow/issues/303)
 - [Rob Spieldenner](https://github.com/rspieldenner) - Fix integration with `application` plugin in Gradle 4.3, [#339](https://github.com/GradleUp/shadow/issues/339)
@@ -568,7 +586,7 @@ Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package
 
 - Support for Gradle 2.11-rc-1, [#177](https://github.com/GradleUp/shadow/issues/177)
 - Convert internal framework to [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html)
-- [Fedor Korotkov](https://github.com/fkorotkov) - Use BufferedOutputStream when writing the Zip file, [#171](https://github.com/GradleUp/shadow/pull/171[)
+- [Fedor Korotkov](https://github.com/fkorotkov) - Use BufferedOutputStream when writing the Zip file, [#171](https://github.com/GradleUp/shadow/pull/171)
 - [Haw-Bin Chai](https://github.com/hbchai) - Quote Jar path in Windows start script as it may contain spaces, [#170](https://github.com/GradleUp/shadow/pull/170)
 - [Serban Iordache](https://github.com/siordache) - Evaluate relocation specs when merging service descriptors, [#165](https://github.com/GradleUp/shadow/pull/165)
 
@@ -611,9 +629,9 @@ Instead, use the `enableRelocation = true` and `relocationPrefix = "<new package
   will now properly configure the POM dependencies by removing the `'compile'` and `'runtime'` configurations from the
   POM and adding the `'shadow'` configuration as a `RUNTIME` scope in the POM. This behavior matches the behavior when
   using the `'maven-publish'` plugin.
-- [Matt Hurne](https://github.com/mhurne) - Allow `ServiceFileTransformer` to specify include/exclude patterns for
+- [Matt Hurne](https://github.com/matthurne) - Allow `ServiceFileTransformer` to specify include/exclude patterns for
   files within the configured path to merge.
-- [Matt Hurne](https://github.com/mhurne) - Added `GroovyExtensionModuleTransformer` for merging Groovy Extension module
+- [Matt Hurne](https://github.com/matthurne) - Added `GroovyExtensionModuleTransformer` for merging Groovy Extension module
   descriptor files. The existing `ServiceFileTransformer` now excludes Groovy Extension Module descriptors by default.
 - `distShadowZip` and `distShadowZip` now contain the shadow library and run scripts instead of the default from the
   `'application'` plugin, [#89](https://github.com/GradleUp/shadow/issues/89)
