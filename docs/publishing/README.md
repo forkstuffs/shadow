@@ -3,7 +3,7 @@
 ## Publishing with Maven-Publish Plugin
 
 The Shadow plugin will automatically configure the necessary tasks in the presence of Gradle's
-`maven-publish` plugin.
+[`maven-publish`][maven-publish] plugin.
 The plugin provides the `shadow` component to configure the publication with the necessary
 artifact and dependencies in the POM file.
 
@@ -67,10 +67,9 @@ This automatic configuration occurs _only_ when using the above methods for
 configuring publishing. If this behavior is not desirable, then publishing **must**
 be manually configured.
 
-
 ## Publish the Shadowed JAR instead of the Original JAR
 
-You may want to publish the shadowed JAR instead of the original JAR. This can be done by trimming 
+You may want to publish the shadowed JAR instead of the original JAR. This can be done by trimming
 the `archiveClassifier` of the shadowed JAR like the following:
 
 === "Kotlin"
@@ -148,10 +147,10 @@ the `archiveClassifier` of the shadowed JAR like the following:
     }
     ```
 
-
 ## Publish Custom ShadowJar Task Outputs
 
-It is possible to publish a custom `ShadowJar` task's output via the [`MavenPublication.artifact(java.lang.Object)`](https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html#org.gradle.api.publish.maven.MavenPublication:artifact(java.lang.Object)) method. 
+It is possible to publish a custom [`ShadowJar`][ShadowJar] task's output via the
+[`MavenPublication.artifact()`][MavenPublication.artifact] method.
 
 === "Kotlin"
 
@@ -219,10 +218,9 @@ It is possible to publish a custom `ShadowJar` task's output via the [`MavenPubl
     }
     ```
 
-
 ## Publish the Shadowed JAR with Custom Artifact Name
 
-It is possible to configure the artifact name of the shadowed JAR via properties like `archiveBaseName`, see more 
+It is possible to configure the artifact name of the shadowed JAR via properties like `archiveBaseName`, see more
 customizable properties listed in [Configuring Output Name](../configuration/README.md#configuring-output-name). e.g.
 
 === "Kotlin"
@@ -289,5 +287,12 @@ customizable properties listed in [Configuring Output Name](../configuration/REA
     }
     ```
 
-We modified `archiveClassifier`, `archiveExtension` and `archiveBaseName` in this example, the published artifact will 
+We modified `archiveClassifier`, `archiveExtension` and `archiveBaseName` in this example, the published artifact will
 be named `my-artifact-2.0-my-classifier.my-ext` instead of `1.0-all.jar`.
+
+
+
+[Jar]: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+[MavenPublication.artifact]: https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html#org.gradle.api.publish.maven.MavenPublication:artifact(java.lang.Object)
+[ShadowJar]: ../api/shadow/com.github.jengelman.gradle.plugins.shadow.tasks/-shadow-jar/index.html
+[maven-publish]: https://docs.gradle.org/current/userguide/publishing_maven.html

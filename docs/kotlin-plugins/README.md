@@ -1,6 +1,6 @@
 # Integrating with Kotlin Plugins
 
-Kotlin standard libraries (stdlib) are added by Kotlin plugins by default via `implementation` (`runtimeClasspath`), 
+Kotlin standard libraries (stdlib) are added by Kotlin plugins by default via `implementation` (`runtimeClasspath`),
 they will be bundled into the shadowed JARs automatically.
 If you don't need a standard library at all, you can add the following Gradle property to your gradle.properties file:
 
@@ -8,7 +8,7 @@ If you don't need a standard library at all, you can add the following Gradle pr
 kotlin.stdlib.default.dependency=false
 ```
 
-Kotlin compilations may still require the standard libraries, you can add them into `compileOnly` (`compileClasspath`) 
+Kotlin compilations may still require the standard libraries, you can add them into `compileOnly` (`compileClasspath`)
 to make sure compilations success and avoid shadowing as follows:
 
 === "Kotlin"
@@ -27,7 +27,8 @@ to make sure compilations success and avoid shadowing as follows:
     }
     ```
 
-See more information about [Dependency on the standard library](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-on-the-standard-library).
+See more information about
+[Dependency on the standard library](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-on-the-standard-library).
 
 ## For Kotlin JVM Plugin
 
@@ -60,14 +61,14 @@ Shadow works well for Kotlin JVM projects like Java projects. Here is an example
     ```
 
 You can mix the Kotlin JVM plugin with `java-gradle-plugin`, `application`, and other Java plugins,
-easily organize your build logic for [Packaging Gradle Plugins](../gradle-plugins/README.md), [Publishing Libraries](../publishing/README.md),
+easily organize your build logic for
+[Packaging Gradle Plugins](../gradle-plugins/README.md), [Publishing Libraries](../publishing/README.md),
 [Running Applications](../application-plugin/README.md), and so on.
 
 ## For Kotlin Multiplatform Plugin
 
-Shadow honors Kotlin's
-[`org.jetbrains.kotlin.multiplatform`](https://kotlinlang.org/docs/multiplatform-intro.html) plugin and will automatically
-configure additional tasks for bundling the shadowed JAR for its `jvm` target.
+Shadow honors Kotlin's [`org.jetbrains.kotlin.multiplatform`][org.jetbrains.kotlin.multiplatform] plugin and will
+automatically configure additional tasks for bundling the shadowed JAR for its `jvm` target.
 
 === "Kotlin"
 
@@ -82,7 +83,7 @@ configure additional tasks for bundling the shadowed JAR for its `jvm` target.
     kotlin {
       @Suppress("OPT_IN_USAGE")
       jvm().mainRun {
-        // Optionally, set the main class for `runJvm`, it's available from Kotlin 2.1.0
+        // Optionally, set the main class for `runJvm`.
         mainClass = "myapp.MainKt"
       }
       sourceSets {
@@ -120,7 +121,7 @@ configure additional tasks for bundling the shadowed JAR for its `jvm` target.
 
     kotlin {
       jvm().mainRun {
-        // Optionally, set the main class for `runJvm`, it's available from Kotlin 2.1.0
+        // Optionally, set the main class for `runJvm`.
         it.mainClass.set('myapp.MainKt')
       }
       sourceSets {
@@ -144,3 +145,7 @@ configure additional tasks for bundling the shadowed JAR for its `jvm` target.
       }
     }
     ```
+
+
+
+[org.jetbrains.kotlin.multiplatform]: https://kotlinlang.org/docs/multiplatform-intro.html
